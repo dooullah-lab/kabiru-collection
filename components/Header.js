@@ -38,6 +38,12 @@ export default function Header() {
           🛒 Cart {count > 0 && <span className="ml-1 bg-red text-white rounded-full px-2 text-xs">{count}</span>}
         </Link>
       </div>
+      <div className="max-w-6xl mx-auto px-6 pb-3 flex gap-5 text-sm text-dim">
+        <Link href="/" className="hover:text-cream">Shop</Link>
+        <Link href="/categories" className="hover:text-cream">Categories</Link>
+        <Link href="/support" className="hover:text-cream">Support</Link>
+        <Link href="/contact" className="hover:text-cream">Contact</Link>
+      </div>
     </header>
   );
 }

@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { useCart } from "@/components/CartContext";
+import ImageLightbox from "@/components/ImageLightbox";
 
 function naira(n) {
   return "₦" + Number(n).toLocaleString("en-NG", { maximumFractionDigits: 0 });
@@ -11,6 +12,7 @@ export default function ProductPage({ params }) {
   const [product, setProduct] = useState(null);
   const [size, setSize] = useState("");
   const [activeImg, setActiveImg] = useState(0);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
   const { addToCart } = useCart();
 
   useEffect(() => {
@@ -33,9 +35,16 @@ export default function ProductPage({ params }) {
     <div className="grid md:grid-cols-2 gap-10">
       <div>
         <div
-          className="h-80 bg-surface2 rounded-2xl bg-cover bg-center"
+          onClick={() => images[activeImg] && setLightboxOpen(true)}
+          className="relative h-80 bg-surface2 rounded-2xl bg-cover bg-center cursor-zoom-in group"
           style={images[activeImg] ? { backgroundImage: `url(${images[activeImg]})` } : {}}
-        />
+        >
+          {images[activeImg] && (
+            <span className="absolute bottom-3 right-3 bg-black/60 text-white text-xs px-2.5 py-1.5 rounded-lg group-hover:bg-black/80">
+              🔍 Click to zoom
+            </span>
+          )}
+        </div>
         {images.length > 1 && (
           <div className="flex gap-2 mt-3 flex-wrap">
             {images.map((img, i) => (
@@ -85,6 +94,10 @@ export default function ProductPage({ params }) {
           {product.stock <= 0 ? "Out of stock" : "Add to cart"}
         </button>
       </div>
+
+      {lightboxOpen && (
+        <ImageLightbox src={images[activeImg]} alt={product.name} onClose={() => setLightboxOpen(false)} />
+      )}
     </div>
   );
 }
