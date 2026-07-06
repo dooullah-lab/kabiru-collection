@@ -11,6 +11,7 @@ export default function ProductCard({ product }) {
     ? Math.round(product.price * (1 - product.discount / 100))
     : product.price;
   const outOfStock = Number(product.stock) <= 0;
+  const thumb = (product.images && product.images[0]) || product.image_url;
 
   return (
     <Link
@@ -20,9 +21,9 @@ export default function ProductCard({ product }) {
       {hasDiscount && <div className="price-tag">-{product.discount}%</div>}
       <div
         className="h-40 bg-surface2 bg-cover bg-center flex items-center justify-center text-dim text-xs"
-        style={product.image_url ? { backgroundImage: `url(${product.image_url})` } : {}}
+        style={thumb ? { backgroundImage: `url(${thumb})` } : {}}
       >
-        {!product.image_url && "No image"}
+        {!thumb && "No image"}
       </div>
       <div className="p-4 flex flex-col gap-1.5 flex-1">
         <div className="text-[11px] uppercase tracking-wide text-dim font-semibold">

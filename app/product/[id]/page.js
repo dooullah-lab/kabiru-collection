@@ -10,6 +10,7 @@ function naira(n) {
 export default function ProductPage({ params }) {
   const [product, setProduct] = useState(null);
   const [size, setSize] = useState("");
+  const [activeImg, setActiveImg] = useState(0);
   const { addToCart } = useCart();
 
   useEffect(() => {
@@ -22,6 +23,7 @@ export default function ProductPage({ params }) {
 
   if (!product) return <div className="text-dim">Loading…</div>;
 
+  const images = (product.images && product.images.length ? product.images : (product.image_url ? [product.image_url] : []));
   const hasDiscount = Number(product.discount) > 0;
   const discounted = hasDiscount
     ? Math.round(product.price * (1 - product.discount / 100))
@@ -29,10 +31,24 @@ export default function ProductPage({ params }) {
 
   return (
     <div className="grid md:grid-cols-2 gap-10">
-      <div
-        className="h-80 bg-surface2 rounded-2xl bg-cover bg-center"
-        style={product.image_url ? { backgroundImage: `url(${product.image_url})` } : {}}
-      />
+      <div>
+        <div
+          className="h-80 bg-surface2 rounded-2xl bg-cover bg-center"
+          style={images[activeImg] ? { backgroundImage: `url(${images[activeImg]})` } : {}}
+        />
+        {images.length > 1 && (
+          <div className="flex gap-2 mt-3 flex-wrap">
+            {images.map((img, i) => (
+              <button
+                key={img}
+                onClick={() => setActiveImg(i)}
+                className={`w-16 h-16 rounded-lg bg-cover bg-center border-2 ${activeImg === i ? "border-gold" : "border-border"}`}
+                style={{ backgroundImage: `url(${img})` }}
+              />
+            ))}
+          </div>
+        )}
+      </div>
       <div>
         <div className="text-xs uppercase text-dim font-semibold">{product.category}</div>
         <h1 className="text-2xl font-bold mt-1">{product.name}</h1>
@@ -63,7 +79,7 @@ export default function ProductPage({ params }) {
 
         <button
           disabled={product.stock <= 0}
-          onClick={() => addToCart(product, size)}
+          onClick={() => addToCart({ ...product, image_url: images[0] }, size)}
           className="mt-6 bg-gold disabled:bg-surface2 disabled:text-dim text-bg font-bold px-6 py-3 rounded-xl"
         >
           {product.stock <= 0 ? "Out of stock" : "Add to cart"}
