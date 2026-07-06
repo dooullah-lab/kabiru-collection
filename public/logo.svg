@@ -1,0 +1,20 @@
+<svg width="240" height="240" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
+  <rect width="240" height="240" rx="42" fill="#12121A"/>
+  <rect x="10" y="10" width="220" height="220" rx="34" fill="none" stroke="#33333F" stroke-width="2"/>
+
+  <!-- rotated price-tag signature shape -->
+  <g transform="translate(120,118) rotate(-8)">
+    <path d="M -70 -46 L 40 -46 Q 55 -46 55 -31 L 55 46 Q 55 61 40 61 L -70 61 L -95 7.5 Z" fill="#E8A13A"/>
+    <circle cx="-70" cy="-20" r="7" fill="#12121A"/>
+  </g>
+
+  <!-- K monogram -->
+  <text x="112" y="140" font-family="Arial, Helvetica, sans-serif" font-weight="700"
+        font-size="70" fill="#12121A" text-anchor="middle">K</text>
+
+  <!-- wordmark -->
+  <text x="120" y="205" font-family="Arial, Helvetica, sans-serif" font-weight="700"
+        font-size="19" letter-spacing="1.5" fill="#F3EFE6" text-anchor="middle">KABIRU</text>
+  <text x="120" y="223" font-family="Arial, Helvetica, sans-serif" font-weight="600"
+        font-size="11" letter-spacing="3.5" fill="#9A97A6" text-anchor="middle">COLLECTION</text>
+</svg>
