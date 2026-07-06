@@ -28,7 +28,7 @@ export default function ContactPage() {
       <div>
         <h1 className="text-2xl font-bold mb-4">Contact Us</h1>
         <div className="space-y-3 text-dim text-sm">
-          <div><span className="text-cream font-semibold">Address:</span> 14 Adeniran Ogunsanya Street, Surulere, Lagos, Nigeria</div>
+          <div><span className="text-cream font-semibold">Address:</span> Kano State, Nigeria</div>
           <div><span className="text-cream font-semibold">Phone:</span> +234 8039700471</div>
           <div><span className="text-cream font-semibold">Email:</span> kabirusky@gmail.com</div>
           <div><span className="text-cream font-semibold">Hours:</span> Monday – Saturday, 9am – 7pm</div>
