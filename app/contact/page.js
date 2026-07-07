@@ -28,13 +28,13 @@ export default function ContactPage() {
       <div>
         <h1 className="text-2xl font-bold mb-4">Contact Us</h1>
         <div className="space-y-3 text-dim text-sm">
-          <div><span className="text-cream font-semibold">Address:</span> Kano State, Nigeria</div>
-          <div><span className="text-cream font-semibold">Phone:</span> +234 8039700471</div>
-          <div><span className="text-cream font-semibold">Email:</span> kabirusky@gmail.com</div>
+          <div><span className="text-cream font-semibold">Address:</span> 14 Adeniran Ogunsanya Street, Surulere, Lagos, Nigeria</div>
+          <div><span className="text-cream font-semibold">Phone:</span> +234 801 234 5678</div>
+          <div><span className="text-cream font-semibold">Email:</span> hello@kabirucollection.com</div>
           <div><span className="text-cream font-semibold">Hours:</span> Monday – Saturday, 9am – 7pm</div>
         </div>
         <a
-          href="https://wa.me/+2348039700471"
+          href="https://wa.me/2348012345678"
           target="_blank"
           rel="noreferrer"
           className="inline-block mt-5 bg-green text-white font-bold px-5 py-2.5 rounded-lg"

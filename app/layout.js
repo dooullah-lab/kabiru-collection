@@ -1,5 +1,6 @@
 import "./globals.css";
 import { CartProvider } from "@/components/CartContext";
+import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
@@ -13,6 +14,7 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body>
         <CartProvider>
+          <TopBar />
           <Header />
           <main className="max-w-6xl mx-auto px-6 py-8 min-h-[60vh]">{children}</main>
           <Footer />

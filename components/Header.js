@@ -1,15 +1,24 @@
 "use client";
 import Link from "next/link";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useCart } from "./CartContext";
+import { supabaseBrowser } from "@/lib/supabaseBrowserClient";
 
 export default function Header() {
   const { cart } = useCart();
   const router = useRouter();
+  const supabase = supabaseBrowser();
   const [term, setTerm] = useState("");
+  const [user, setUser] = useState(undefined);
   const count = cart.reduce((s, c) => s + c.qty, 0);
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => setUser(data.user || null));
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => setUser(session?.user ?? null));
+    return () => sub.subscription.unsubscribe();
+  }, []);
 
   function submitSearch(e) {
     e.preventDefault();
@@ -33,6 +42,10 @@ export default function Header() {
           />
           <button className="bg-gold text-bg font-bold px-4 rounded-r-lg text-sm">Search</button>
         </form>
+
+        <Link href="/account" className="text-sm text-dim hover:text-cream shrink-0 font-medium">
+          {user ? "My Account" : "Sign in / Register"}
+        </Link>
 
         <Link href="/cart" className="bg-surface border border-border rounded-lg px-3 py-2 font-semibold text-sm shrink-0">
           🛒 Cart {count > 0 && <span className="ml-1 bg-red text-white rounded-full px-2 text-xs">{count}</span>}

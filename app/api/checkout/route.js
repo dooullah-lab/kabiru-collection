@@ -1,9 +1,16 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
+import { supabaseServer } from "@/lib/supabaseServer";
 
 // This runs on the SERVER, never in the customer's browser, so it's safe
 // to use the secret Paystack key here.
 export async function POST(req) {
+  const server = supabaseServer();
+  const { data: { user } } = await server.auth.getUser();
+  if (!user) {
+    return NextResponse.json({ error: "Please sign in to place an order." }, { status: 401 });
+  }
+
   const { cart, email, name } = await req.json();
 
   if (!cart || cart.length === 0) {
@@ -30,7 +37,7 @@ export async function POST(req) {
 
   const { data: order, error: orderErr } = await supabaseAdmin
     .from("orders")
-    .insert({ items, total, customer_name: name, customer_email: email, status: "pending" })
+    .insert({ items, total, customer_name: name, customer_email: email, customer_id: user.id, status: "pending" })
     .select()
     .single();
 

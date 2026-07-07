@@ -15,6 +15,10 @@ export default async function ShopPage({ searchParams }) {
   const { data: allProducts } = await supabase.from("products").select("category");
   const categories = Array.from(new Set((allProducts || []).map((p) => p.category).filter(Boolean)));
 
+  const { data: deals } = !q && !category
+    ? await supabase.from("products").select("*").gt("discount", 0).order("discount", { ascending: false }).limit(8)
+    : { data: [] };
+
   if (error) {
     return <div className="text-red">Could not load products: {error.message}</div>;
   }
@@ -22,10 +26,31 @@ export default async function ShopPage({ searchParams }) {
   return (
     <div>
       {!q && !category && (
-        <div className="bg-surface border border-border rounded-2xl px-8 py-10 mb-8 text-center">
-          <h1 className="text-3xl font-bold">Kabiru Collection</h1>
-          <p className="text-dim mt-2">Quality goods, honest prices.</p>
-        </div>
+        <>
+          <div className="bg-surface border border-border rounded-2xl px-8 py-10 mb-6 text-center">
+            <h1 className="text-3xl font-bold">Kabiru Collection</h1>
+            <p className="text-dim mt-2">Quality goods, honest prices.</p>
+          </div>
+
+          <div className="bg-surface border border-border rounded-2xl px-6 py-4 mb-8 flex flex-wrap justify-around gap-3 text-sm text-dim">
+            <span>🔒 Secure payments via Paystack</span>
+            <span>✅ Every item checked before listing</span>
+            <span>🚚 Delivery guarantee</span>
+          </div>
+
+          {deals && deals.length > 0 && (
+            <div className="mb-10">
+              <h2 className="text-lg font-bold mb-4">⚡ Hot Deals</h2>
+              <div className="flex gap-4 overflow-x-auto pb-2">
+                {deals.map((p) => (
+                  <div key={p.id} className="w-44 shrink-0">
+                    <ProductCard product={p} />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </>
       )}
 
       {categories.length > 0 && (
