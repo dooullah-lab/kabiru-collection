@@ -14,13 +14,16 @@ export default function CartPage() {
   const supabase = supabaseBrowser();
   const [user, setUser] = useState(undefined);
   const [name, setName] = useState("");
+  const [address, setAddress] = useState("");
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
       setUser(data.user || null);
-      if (data.user?.user_metadata?.full_name) setName(data.user.user_metadata.full_name);
+      const meta = data.user?.user_metadata;
+      if (meta?.full_name) setName(meta.full_name);
+      if (meta?.address) setAddress(meta.address);
     });
   }, []);
 
@@ -34,13 +37,17 @@ export default function CartPage() {
       router.push("/account?redirect=/cart");
       return;
     }
+    if (!address) {
+      setErrorMsg("Please add a delivery address.");
+      return;
+    }
     setErrorMsg("");
     setLoading(true);
     try {
       const res = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ cart, email: user.email, name }),
+        body: JSON.stringify({ cart, email: user.email, name, address }),
       });
       const data = await res.json();
       if (data.authorization_url) {
@@ -92,12 +99,21 @@ export default function CartPage() {
           </div>
         )}
         {user && (
-          <input
-            className="w-full bg-surface2 border border-border rounded-lg px-3 py-2"
-            placeholder="Your name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
+          <>
+            <input
+              className="w-full bg-surface2 border border-border rounded-lg px-3 py-2"
+              placeholder="Your name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+            <textarea
+              className="w-full bg-surface2 border border-border rounded-lg px-3 py-2"
+              placeholder="Delivery address"
+              rows={2}
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+            />
+          </>
         )}
         {errorMsg && <div className="text-red text-sm">{errorMsg}</div>}
         <button

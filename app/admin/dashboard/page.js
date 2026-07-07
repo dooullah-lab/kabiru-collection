@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
+import AdminNav from "@/components/AdminNav";
 
 const empty = { name: "", description: "", price: "", discount: "", sizes: "", stock: "", images: [], category: "" };
 
@@ -92,6 +93,7 @@ export default function Dashboard() {
 
   return (
     <div>
+      <AdminNav active="Products" />
       <h1 className="text-2xl font-bold mb-6">Manage Products</h1>
 
       <form onSubmit={submit} className="bg-surface border border-border rounded-2xl p-6 grid grid-cols-2 gap-3 mb-8">
