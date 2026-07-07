@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { supabaseBrowser } from "@/lib/supabaseBrowserClient";
 
@@ -8,6 +8,14 @@ function naira(n) {
 }
 
 export default function AccountPage() {
+  return (
+    <Suspense fallback={<div className="text-dim">Loading…</div>}>
+      <AccountInner />
+    </Suspense>
+  );
+}
+
+function AccountInner() {
   const supabase = supabaseBrowser();
   const router = useRouter();
   const searchParams = useSearchParams();
