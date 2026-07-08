@@ -14,7 +14,7 @@ module.exports = {
         cream: "#1c1a15",
         dim: "#75705f",
         ink: "#1c1a15",
-        navy: "#12121a"
+        navy: "#5b9bd5"
       }
     }
   },
