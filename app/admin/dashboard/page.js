@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import AdminNav from "@/components/AdminNav";
+import Link from "next/link";
 
 const empty = { name: "", description: "", price: "", discount: "", sizes: "", stock: "", images: [], category: "" };
 
@@ -99,12 +100,13 @@ export default function Dashboard() {
     <div>
       <AdminNav active="Products" />
 
-      <div className="bg-surface border border-border rounded-2xl px-6 py-4 mb-6 inline-block">
+      <Link href="/admin/reports" className="block bg-surface border border-border rounded-2xl px-6 py-4 mb-6 inline-block hover:border-gold transition-colors">
         <div className="text-dim text-xs uppercase font-semibold">Total Sales</div>
         <div className="text-2xl font-bold font-mono mt-1">
           {totalSales === null ? "…" : "₦" + Number(totalSales).toLocaleString("en-NG")}
         </div>
-      </div>
+        <div className="text-gold text-xs font-semibold mt-1">See what sold, and to whom ›</div>
+      </Link>
 
       <h1 className="text-2xl font-bold mb-6">Manage Products</h1>
 

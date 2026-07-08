@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import AdminNav from "@/components/AdminNav";
 
 function naira(n) {
@@ -20,21 +20,73 @@ export default function AdminReports() {
 
   useEffect(() => { load(); }, []);
 
+  // Every individual item sold, with who bought it -- this is the
+  // "what was sold, and to whom" breakdown.
+  const salesRows = useMemo(() => {
+    if (!data) return [];
+    const rows = [];
+    data.orders
+      .filter((o) => o.status === "paid")
+      .forEach((o) => {
+        (o.items || []).forEach((it) => {
+          rows.push({
+            date: new Date(o.created_at).toLocaleDateString(),
+            product: it.name,
+            size: it.size || "",
+            qty: it.qty,
+            unitPrice: it.price,
+            lineTotal: it.price * it.qty,
+            customer: o.customer_name || "—",
+            email: o.customer_email || "—",
+            phone: o.customer_phone || "—",
+          });
+        });
+      });
+    return rows.sort((a, b) => new Date(b.date) - new Date(a.date));
+  }, [data]);
+
   function downloadCSV() {
-    if (!data) return;
-    const rows = [["Order ID", "Date", "Customer Email", "Status", "Total (NGN)", "Items"]];
-    data.orders.forEach((o) => {
-      const itemsSummary = (o.items || []).map((it) => `${it.name} x${it.qty}`).join("; ");
-      rows.push([o.id, new Date(o.created_at).toLocaleString(), o.customer_email || "", o.status, o.total, itemsSummary]);
-    });
+    const rows = [["Date", "Product", "Size", "Qty", "Unit Price", "Line Total", "Customer", "Email", "Phone"]];
+    salesRows.forEach((r) => rows.push([r.date, r.product, r.size, r.qty, r.unitPrice, r.lineTotal, r.customer, r.email, r.phone]));
     const csv = rows.map((r) => r.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(",")).join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `kabiru-collection-report-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.download = `kabiru-collection-sales-${new Date().toISOString().slice(0, 10)}.csv`;
     a.click();
     URL.revokeObjectURL(url);
+  }
+
+  async function downloadExcel() {
+    const XLSX = await import("xlsx");
+    const sheetData = salesRows.map((r) => ({
+      Date: r.date, Product: r.product, Size: r.size, Qty: r.qty,
+      "Unit Price (₦)": r.unitPrice, "Line Total (₦)": r.lineTotal,
+      Customer: r.customer, Email: r.email, Phone: r.phone,
+    }));
+    const ws = XLSX.utils.json_to_sheet(sheetData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Sales");
+    XLSX.writeFile(wb, `kabiru-collection-sales-${new Date().toISOString().slice(0, 10)}.xlsx`);
+  }
+
+  async function downloadPDF() {
+    const { jsPDF } = await import("jspdf");
+    const autoTable = (await import("jspdf-autotable")).default;
+    const doc = new jsPDF();
+    doc.setFontSize(14);
+    doc.text("Kabiru Collection — Sales Report", 14, 15);
+    doc.setFontSize(9);
+    doc.text(`Generated ${new Date().toLocaleString()}`, 14, 21);
+    autoTable(doc, {
+      startY: 26,
+      head: [["Date", "Product", "Size", "Qty", "Unit ₦", "Total ₦", "Customer", "Phone"]],
+      body: salesRows.map((r) => [r.date, r.product, r.size, r.qty, r.unitPrice, r.lineTotal, r.customer, r.phone]),
+      styles: { fontSize: 8 },
+      headStyles: { fillColor: [18, 18, 26] },
+    });
+    doc.save(`kabiru-collection-sales-${new Date().toISOString().slice(0, 10)}.pdf`);
   }
 
   if (!data) return <div className="text-dim">Loading report…</div>;
@@ -44,9 +96,11 @@ export default function AdminReports() {
       <AdminNav active="Reports" />
       <div className="flex justify-between items-center mb-4 flex-wrap gap-3">
         <h1 className="text-2xl font-bold">Reports</h1>
-        <button onClick={downloadCSV} className="bg-gold text-ink font-bold px-4 py-2 rounded-lg text-sm">
-          Download CSV
-        </button>
+        <div className="flex gap-2">
+          <button onClick={downloadCSV} className="bg-surface2 border border-border font-semibold px-4 py-2 rounded-lg text-sm">CSV</button>
+          <button onClick={downloadExcel} className="bg-surface2 border border-border font-semibold px-4 py-2 rounded-lg text-sm">Excel</button>
+          <button onClick={downloadPDF} className="bg-gold text-ink font-bold px-4 py-2 rounded-lg text-sm">PDF</button>
+        </div>
       </div>
 
       <div className="flex items-end gap-3 mb-6 flex-wrap bg-surface border border-border rounded-xl p-4">
@@ -89,7 +143,7 @@ export default function AdminReports() {
         </div>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-6">
+      <div className="grid md:grid-cols-2 gap-6 mb-8">
         <div className="bg-surface border border-border rounded-2xl p-5">
           <h2 className="font-bold mb-3">Best sellers</h2>
           {data.bestSellers.length === 0 ? (
@@ -120,6 +174,40 @@ export default function AdminReports() {
             </div>
           )}
         </div>
+      </div>
+
+      <div className="bg-surface border border-border rounded-2xl p-5">
+        <h2 className="font-bold mb-3">What sold, and to whom</h2>
+        {salesRows.length === 0 ? (
+          <div className="text-dim text-sm">No sales in this period yet.</div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="text-dim text-xs uppercase border-b border-border">
+                  <th className="text-left py-2 pr-3">Date</th>
+                  <th className="text-left py-2 pr-3">Product</th>
+                  <th className="text-left py-2 pr-3">Qty</th>
+                  <th className="text-left py-2 pr-3">Total</th>
+                  <th className="text-left py-2 pr-3">Customer</th>
+                  <th className="text-left py-2 pr-3">Phone</th>
+                </tr>
+              </thead>
+              <tbody>
+                {salesRows.map((r, i) => (
+                  <tr key={i} className="border-b border-border">
+                    <td className="py-2 pr-3">{r.date}</td>
+                    <td className="py-2 pr-3">{r.product}{r.size ? ` (${r.size})` : ""}</td>
+                    <td className="py-2 pr-3">{r.qty}</td>
+                    <td className="py-2 pr-3 font-mono">{naira(r.lineTotal)}</td>
+                    <td className="py-2 pr-3">{r.customer}</td>
+                    <td className="py-2 pr-3">{r.phone}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
     </div>
   );
