@@ -30,7 +30,7 @@ export default function AdminLogin() {
         onChange={(e) => setPassword(e.target.value)}
       />
       {errorMsg && <div className="text-red text-sm mt-2">{errorMsg}</div>}
-      <button className="w-full mt-3 bg-gold text-bg font-bold py-2.5 rounded-lg">Enter</button>
+      <button className="w-full mt-3 bg-gold text-ink font-bold py-2.5 rounded-lg">Enter</button>
     </form>
   );
 }

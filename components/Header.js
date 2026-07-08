@@ -40,7 +40,7 @@ export default function Header() {
             placeholder="Search for anything…"
             className="w-full bg-surface2 border border-border rounded-l-lg px-3 py-2 text-sm"
           />
-          <button className="bg-gold text-bg font-bold px-4 rounded-r-lg text-sm">Search</button>
+          <button className="bg-gold text-ink font-bold px-4 rounded-r-lg text-sm">Search</button>
         </form>
 
         <Link href="/account" className="text-sm text-dim hover:text-cream shrink-0 font-medium">

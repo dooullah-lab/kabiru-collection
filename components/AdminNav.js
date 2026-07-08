@@ -13,7 +13,7 @@ export default function AdminNav({ active }) {
           key={t.href}
           href={t.href}
           className={`px-4 py-2 rounded-lg text-sm font-semibold border ${
-            active === t.label ? "bg-gold text-bg border-gold" : "border-border text-dim"
+            active === t.label ? "bg-gold text-ink border-gold" : "border-border text-dim"
           }`}
         >
           {t.label}

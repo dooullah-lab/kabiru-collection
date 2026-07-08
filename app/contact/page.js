@@ -63,7 +63,7 @@ export default function ContactPage() {
           onChange={(e) => setForm({ ...form, message: e.target.value })}
           className="w-full bg-surface2 border border-border rounded-lg px-3 py-2"
         />
-        <button className="bg-gold text-bg font-bold px-5 py-2.5 rounded-lg" disabled={status === "sending"}>
+        <button className="bg-gold text-ink font-bold px-5 py-2.5 rounded-lg" disabled={status === "sending"}>
           {status === "sending" ? "Sending…" : "Send message"}
         </button>
         {status === "sent" && <div className="text-green text-sm font-semibold">Message sent — we'll get back to you soon.</div>}

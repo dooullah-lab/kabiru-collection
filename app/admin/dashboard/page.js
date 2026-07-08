@@ -7,6 +7,7 @@ const empty = { name: "", description: "", price: "", discount: "", sizes: "", s
 
 export default function Dashboard() {
   const [products, setProducts] = useState([]);
+  const [totalSales, setTotalSales] = useState(null);
   const [form, setForm] = useState(empty);
   const [editingId, setEditingId] = useState(null);
   const [message, setMessage] = useState("");
@@ -16,7 +17,10 @@ export default function Dashboard() {
     const { data } = await supabase.from("products").select("*").order("created_at", { ascending: false });
     setProducts(data || []);
   }
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    load();
+    fetch("/api/admin/reports").then((r) => r.json()).then((d) => setTotalSales(d.totalRevenue));
+  }, []);
 
   function startEdit(p) {
     setEditingId(p.id);
@@ -94,6 +98,14 @@ export default function Dashboard() {
   return (
     <div>
       <AdminNav active="Products" />
+
+      <div className="bg-surface border border-border rounded-2xl px-6 py-4 mb-6 inline-block">
+        <div className="text-dim text-xs uppercase font-semibold">Total Sales</div>
+        <div className="text-2xl font-bold font-mono mt-1">
+          {totalSales === null ? "…" : "₦" + Number(totalSales).toLocaleString("en-NG")}
+        </div>
+      </div>
+
       <h1 className="text-2xl font-bold mb-6">Manage Products</h1>
 
       <form onSubmit={submit} className="bg-surface border border-border rounded-2xl p-6 grid grid-cols-2 gap-3 mb-8">
@@ -113,14 +125,14 @@ export default function Dashboard() {
         <div className="col-span-2">
           <label className="text-xs text-dim font-semibold block mb-2">Product photos (you can pick more than one)</label>
           <input type="file" accept="image/*" multiple onChange={handleFiles}
-            className="text-sm text-dim file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-gold file:text-bg file:font-bold file:cursor-pointer" />
+            className="text-sm text-dim file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-gold file:text-ink file:font-bold file:cursor-pointer" />
           {uploading && <div className="text-dim text-sm mt-2">Uploading…</div>}
           {form.images.length > 0 && (
             <div className="flex flex-wrap gap-3 mt-3">
               {form.images.map((url, idx) => (
                 <div key={url} className="relative">
                   <img src={url} alt="" className="w-20 h-20 object-cover rounded-lg border border-border" />
-                  {idx === 0 && <span className="absolute -top-2 -left-2 bg-gold text-bg text-[10px] font-bold px-1.5 py-0.5 rounded">MAIN</span>}
+                  {idx === 0 && <span className="absolute -top-2 -left-2 bg-gold text-ink text-[10px] font-bold px-1.5 py-0.5 rounded">MAIN</span>}
                   <div className="flex gap-1 mt-1">
                     {idx !== 0 && (
                       <button type="button" onClick={() => makeMain(idx)} className="text-[10px] text-gold underline">main</button>
@@ -136,7 +148,7 @@ export default function Dashboard() {
         <textarea className="bg-surface2 border border-border rounded-lg px-3 py-2 col-span-2" placeholder="Description" rows={3}
           value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
         <div className="col-span-2 flex gap-3 items-center">
-          <button className="bg-gold text-bg font-bold px-5 py-2.5 rounded-lg">{editingId ? "Save changes" : "Add product"}</button>
+          <button className="bg-gold text-ink font-bold px-5 py-2.5 rounded-lg">{editingId ? "Save changes" : "Add product"}</button>
           {editingId && (
             <button type="button" onClick={() => { setEditingId(null); setForm(empty); }} className="text-dim border border-border px-4 py-2.5 rounded-lg">
               Cancel

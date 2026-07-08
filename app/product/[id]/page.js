@@ -109,7 +109,7 @@ export default function ProductPage({ params }) {
                     key={s}
                     onClick={() => setSize(s)}
                     className={`px-3 py-1.5 rounded-lg border text-sm ${
-                      size === s ? "bg-gold text-bg border-gold font-semibold" : "border-border text-dim"
+                      size === s ? "bg-gold text-ink border-gold font-semibold" : "border-border text-dim"
                     }`}
                   >
                     {s}
@@ -122,7 +122,7 @@ export default function ProductPage({ params }) {
           <button
             disabled={product.stock <= 0}
             onClick={() => addToCart({ ...product, image_url: images[0] }, size)}
-            className="mt-6 bg-gold disabled:bg-surface2 disabled:text-dim text-bg font-bold px-6 py-3 rounded-xl"
+            className="mt-6 bg-gold disabled:bg-surface2 disabled:text-dim text-ink font-bold px-6 py-3 rounded-xl"
           >
             {product.stock <= 0 ? "Out of stock" : "Add to cart"}
           </button>

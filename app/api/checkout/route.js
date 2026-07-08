@@ -11,7 +11,7 @@ export async function POST(req) {
     return NextResponse.json({ error: "Please sign in to place an order." }, { status: 401 });
   }
 
-  const { cart, email, name, address } = await req.json();
+  const { cart, email, name, phone, address } = await req.json();
 
   if (!cart || cart.length === 0) {
     return NextResponse.json({ error: "Cart is empty" }, { status: 400 });
@@ -37,7 +37,7 @@ export async function POST(req) {
 
   const { data: order, error: orderErr } = await supabaseAdmin
     .from("orders")
-    .insert({ items, total, customer_name: name, customer_email: email, customer_id: user.id, shipping_address: address, status: "pending" })
+    .insert({ items, total, customer_name: name, customer_email: email, customer_phone: phone, customer_id: user.id, shipping_address: address, status: "pending", delivery_status: "processing" })
     .select()
     .single();
 

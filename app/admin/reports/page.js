@@ -8,10 +8,17 @@ function naira(n) {
 
 export default function AdminReports() {
   const [data, setData] = useState(null);
+  const [from, setFrom] = useState("");
+  const [to, setTo] = useState("");
 
-  useEffect(() => {
-    fetch("/api/admin/reports").then((r) => r.json()).then(setData);
-  }, []);
+  function load() {
+    const params = new URLSearchParams();
+    if (from) params.set("from", from);
+    if (to) params.set("to", to);
+    fetch(`/api/admin/reports?${params.toString()}`).then((r) => r.json()).then(setData);
+  }
+
+  useEffect(() => { load(); }, []);
 
   function downloadCSV() {
     if (!data) return;
@@ -35,11 +42,28 @@ export default function AdminReports() {
   return (
     <div>
       <AdminNav active="Reports" />
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex justify-between items-center mb-4 flex-wrap gap-3">
         <h1 className="text-2xl font-bold">Reports</h1>
-        <button onClick={downloadCSV} className="bg-gold text-bg font-bold px-4 py-2 rounded-lg text-sm">
+        <button onClick={downloadCSV} className="bg-gold text-ink font-bold px-4 py-2 rounded-lg text-sm">
           Download CSV
         </button>
+      </div>
+
+      <div className="flex items-end gap-3 mb-6 flex-wrap bg-surface border border-border rounded-xl p-4">
+        <label className="text-sm">
+          <div className="text-dim text-xs mb-1">From</div>
+          <input type="date" value={from} onChange={(e) => setFrom(e.target.value)} className="bg-surface2 border border-border rounded-lg px-3 py-2" />
+        </label>
+        <label className="text-sm">
+          <div className="text-dim text-xs mb-1">To</div>
+          <input type="date" value={to} onChange={(e) => setTo(e.target.value)} className="bg-surface2 border border-border rounded-lg px-3 py-2" />
+        </label>
+        <button onClick={load} className="bg-gold text-ink font-bold px-4 py-2 rounded-lg text-sm">Apply</button>
+        {(from || to) && (
+          <button onClick={() => { setFrom(""); setTo(""); setTimeout(load, 0); }} className="text-dim border border-border px-4 py-2 rounded-lg text-sm">
+            Clear
+          </button>
+        )}
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-8">

@@ -9,8 +9,19 @@ function isAuthed(req) {
 export async function GET(req) {
   if (!isAuthed(req)) return NextResponse.json({ error: "Not allowed" }, { status: 401 });
 
-  const { data: orders } = await supabaseAdmin.from("orders").select("*");
+  const { searchParams } = new URL(req.url);
+  const from = searchParams.get("from");
+  const to = searchParams.get("to");
+
+  const { data: allOrders } = await supabaseAdmin.from("orders").select("*");
   const { data: products } = await supabaseAdmin.from("products").select("*");
+
+  const orders = (allOrders || []).filter((o) => {
+    const created = new Date(o.created_at).getTime();
+    if (from && created < new Date(from).getTime()) return false;
+    if (to && created > new Date(to).getTime() + 24 * 60 * 60 * 1000 - 1) return false;
+    return true;
+  });
 
   const paidOrders = (orders || []).filter((o) => o.status === "paid");
   const pendingOrders = (orders || []).filter((o) => o.status !== "paid");

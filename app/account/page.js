@@ -153,6 +153,13 @@ function AccountInner() {
                   </span>
                 </div>
                 <div className="text-dim text-sm mt-1">{naira(o.total)} · {new Date(o.created_at).toLocaleDateString()}</div>
+                {o.status === "paid" && (
+                  <div className="text-dim text-xs mt-1">
+                    Delivery: <span className="font-semibold">
+                      {{ processing: "Processing", in_transit: "In Transit", delivered: "Delivered", received: "Received" }[o.delivery_status || "processing"]}
+                    </span>
+                  </div>
+                )}
               </a>
             ))}
           </div>
@@ -164,10 +171,10 @@ function AccountInner() {
   return (
     <div className="max-w-sm mx-auto">
       <div className="flex gap-2 mb-6 bg-surface border border-border rounded-lg p-1">
-        <button onClick={() => setMode("login")} className={`flex-1 py-2 rounded-md font-semibold text-sm ${mode === "login" ? "bg-gold text-bg" : "text-dim"}`}>
+        <button onClick={() => setMode("login")} className={`flex-1 py-2 rounded-md font-semibold text-sm ${mode === "login" ? "bg-gold text-ink" : "text-dim"}`}>
           Sign In
         </button>
-        <button onClick={() => setMode("register")} className={`flex-1 py-2 rounded-md font-semibold text-sm ${mode === "register" ? "bg-gold text-bg" : "text-dim"}`}>
+        <button onClick={() => setMode("register")} className={`flex-1 py-2 rounded-md font-semibold text-sm ${mode === "register" ? "bg-gold text-ink" : "text-dim"}`}>
           Register
         </button>
       </div>
@@ -197,7 +204,7 @@ function AccountInner() {
             {msg}
           </div>
         )}
-        <button disabled={loading} className="w-full bg-gold text-bg font-bold py-2.5 rounded-lg">
+        <button disabled={loading} className="w-full bg-gold text-ink font-bold py-2.5 rounded-lg">
           {loading ? "Please wait…" : mode === "register" ? "Create account" : "Sign in"}
         </button>
       </form>
