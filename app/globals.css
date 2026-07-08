@@ -3,10 +3,10 @@
 @tailwind utilities;
 
 body {
-  background-color: #ffffff;
-  background-image: radial-gradient(circle at 1px 1px, rgba(0,0,0,0.035) 1px, transparent 1px);
+  background-color: #f7f5ef;
+  background-image: radial-gradient(circle at 1px 1px, rgba(0,0,0,0.03) 1px, transparent 1px);
   background-size: 22px 22px;
-  color: #18181f;
+  color: #1c1a15;
   font-family: 'Inter', system-ui, sans-serif;
 }
 

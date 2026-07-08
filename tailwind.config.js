@@ -4,16 +4,17 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        bg: "#ffffff",
+        bg: "#f7f5ef",
         surface: "#ffffff",
-        surface2: "#f3f3f6",
-        border: "#e4e4ea",
+        surface2: "#efece3",
+        border: "#e2ddd0",
         gold: "#d98a1f",
         green: "#1f8a5c",
         red: "#d84a37",
-        cream: "#18181f",
-        dim: "#6b6b78",
-        ink: "#18181f"
+        cream: "#1c1a15",
+        dim: "#75705f",
+        ink: "#1c1a15",
+        navy: "#12121a"
       }
     }
   },
