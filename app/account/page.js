@@ -207,6 +207,9 @@ function AccountInner() {
         <button disabled={loading} className="w-full bg-gold text-ink font-bold py-2.5 rounded-lg">
           {loading ? "Please wait…" : mode === "register" ? "Create account" : "Sign in"}
         </button>
+        {mode === "login" && (
+          <a href="/account/forgot-password" className="block text-center text-sm text-dim">Forgot your password?</a>
+        )}
       </form>
     </div>
   );
